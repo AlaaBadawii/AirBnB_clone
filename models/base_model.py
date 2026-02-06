@@ -13,29 +13,23 @@ class BaseModel():
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
-    def to_dict(self):
-        """returns a dictionary containing all keys/values"""
-        obj_dict = self.__dict__.copy()
-
-        obj_dict["__class__"] = self.__class__.__name__
-        obj_dict["created_at"] = self.created_at.isoformat()
-        obj_dict["updated_at"] = self.updated_at.isoformat()
-
-        return obj_dict
-
-    def save(self):
-        """ save:
-            updates the public instance attribute updated_at
-            with the current datetime
-        """
-        self.updated_at = datetime.now()
-
     def __str__(self):
-        """ __str__:
-            prints [<class name>] (<self.id>) <self.__dict__>
+        """
+        should print:
+        [<class name>] (<self.id>) <self.__dict__>
         """
         return "[{}] ({}) {}".format(
-            self.__class__.__name__,
-            self.id,
-            self.__dict__
+            type(self).__name__, self.id, self.__dict__
         )
+
+    def to_dict(self):
+        """Public instance methods"""
+        dict = {**self.__dict__}  # id created_at updated_at
+        dict['__class__'] = type(self).__name__  # BaseModel
+        dict['created_at'] = dict['created_at'].isoformat()
+        dict['updated_at'] = dict['updated_at'].isoformat()
+        return dict
+
+    def save(self):
+        """Public instance methods"""
+        self.updated_at = datetime.now()
