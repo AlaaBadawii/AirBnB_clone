@@ -6,12 +6,23 @@ from datetime import datetime
 
 class BaseModel():
     """Base class: defines all common attributes/methods"""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """ initilizie a new BaseModel instance
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        if kwargs:
+            for k, v in kwargs.items():
+                if k == "__class__":
+                    continue
+
+                if k == "updated_at" or k == "created_at":
+                    v = datetime.fromisoformat(v)
+
+                setattr(self, k, v)
+
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.utcnow()
+            self.updated_at = datetime.utcnow()
 
     def to_dict(self):
         """returns a dictionary containing all keys/values"""
