@@ -41,7 +41,8 @@ class FileStorage():
         try:
             # Local import to avoid circular import
             from models.base_model import BaseModel
-            self.classes = {"BaseModel": BaseModel}
+            from models.user import User
+            self.classes = {"BaseModel": BaseModel, "User": User}
 
             with open(self.__file_path, 'r', encoding='utf-8') as fp:
                 obj_dict = json.load(fp)
