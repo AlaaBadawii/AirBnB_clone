@@ -139,7 +139,7 @@ class TestBaseModel(unittest.TestCase):
     def test_to_dict_class_name(self):
         base_dict = self.base.to_dict()
         self.assertEqual(base_dict["__class__"], "BaseModel")
-    
+
     def test_new_if_new_instance_created(self):
         """test new method run if a new instance created"""
 
