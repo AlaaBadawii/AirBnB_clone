@@ -3,6 +3,7 @@
 import cmd
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
@@ -10,7 +11,10 @@ class HBNBCommand(cmd.Cmd):
     the entry point of the command interpreter"""
     prompt = "(hbnb) "
 
-    classes = {"BaseModel": BaseModel}
+    classes = {
+        "BaseModel": BaseModel,
+        "User": User
+        }
 
     def do_create(self, arg):
         """Creates a new instance of BaseModel"""
