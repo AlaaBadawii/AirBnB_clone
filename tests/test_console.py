@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """test module for console.py"""
-from email import message
 from io import StringIO
 import unittest
 from unittest.mock import patch
@@ -124,7 +123,7 @@ class TestConsole(unittest.TestCase):
         """test for class doesn't exist"""
         _, message = self._helper("destroy FakeClass")
         self.assertEqual(message.strip(), "** class doesn't exist **")
-    
+
     def test_destroy_id_missing(self):
         """test for missing id"""
         _, message = self._helper("destroy BaseModel")
@@ -134,7 +133,7 @@ class TestConsole(unittest.TestCase):
         """passing wrong id means no instance found"""
         _, message = self._helper("destroy BaseModel 187654")
         self.assertEqual(message.strip(), "** no instance found **")
-    
+
     def test_destroy_corret_input(self):
         """test for destory with correct data"""
         _, id = self._helper("create BaseModel")
@@ -149,7 +148,7 @@ class TestConsole(unittest.TestCase):
         """test if invaild class were pushed"""
         _, message = self._helper("all FakeClass")
         self.assertEqual(message.strip(), "** class doesn't exist **")
-    
+
     def test_all_with_specific_class(self):
         """retrive specific instance objects"""
         self._helper("create BaseModel")
@@ -187,9 +186,9 @@ class TestConsole(unittest.TestCase):
         self.assertEqual(list_objects, result)
 
     # update
-    def test_destroy_name_missing(self):
+    def test_update_name_missing(self):
         """test for missing name"""
-        _, message = self._helper("destroy")
+        _, message = self._helper("update")
         self.assertEqual(message.strip(), "** class name missing **")
     
     def test_update_wrong_class(self):
@@ -235,3 +234,25 @@ class TestConsole(unittest.TestCase):
         obj = storage.all()[key]
 
         self.assertIn("age", str(obj))
+
+    def test_update_with_different_types(self):
+        """test update with different types of data"""
+        _, id = self._helper("create BaseModel")
+        self._helper(f"update BaseModel {id} age 22")
+        self._helper(f"update BaseModel {id} name John")
+        self._helper(f"update BaseModel {id} height 1.75")
+
+        key = f"BaseModel.{id.strip()}"
+        obj = storage.all()[key]
+
+        self.assertIn("age", str(obj))
+        self.assertIn("name", str(obj))
+        self.assertIn("height", str(obj))
+
+    def test_console_can_handle_all_classes(self):
+        """test console can handle all classes"""
+        classes = ["BaseModel", "User", "State", "City", "Amenity", "Place", "Review"]
+        for cls in classes:
+            _, id = self._helper(f"create {cls}")
+            key = f"{cls}.{id.strip()}"
+            self.assertIn(key, storage.all())
