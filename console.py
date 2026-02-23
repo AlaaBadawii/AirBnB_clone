@@ -116,6 +116,39 @@ class HBNBCommand(cmd.Cmd):
             setattr(obj, args[2], args[3])
             storage.save()
 
+    def do_count(self, arg):
+        """return count of instances in a class"""
+        if not arg:
+            print("** class name missing **")
+        elif arg not in self.classes:
+            print("** class doesn't exist **")
+        else:
+            count = 0
+            for obj in storage.all().values():
+                if obj.__class__.__name__ == arg:
+                    count += 1
+            print(count)
+
+    def default(self, line):
+        """Handle the default case when an unrecognized command is entered."""
+        if '.' in line and '(' in line and ')' in line:
+            class_name = line[:line.find('.')]
+            method = line[line.find('.') + 1:line.find('(')]
+
+            if method == "all":
+                return self.do_all(class_name)
+            elif method == "count":
+                return self.do_count(class_name)
+            elif method == "show":
+                id = line[line.find('(')+1:line.find(')')]
+                id = id.strip('"')  # remove quotes if present
+                return self.do_show(class_name + " " + id)
+            elif method == "destroy":
+                id = line[line.find('(')+1:line.find(')')]
+                id = id.strip('"')  # remove quotes if present
+                return self.do_destroy(class_name + " " + id)
+        print("*** Unknown syntax:", line)
+
     def do_help(self, arg):
         """return a list of available cmds or what a specific cmd do  """
         return super().do_help(arg)
