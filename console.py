@@ -147,6 +147,14 @@ class HBNBCommand(cmd.Cmd):
                 id = line[line.find('(')+1:line.find(')')]
                 id = id.strip('"')  # remove quotes if present
                 return self.do_destroy(class_name + " " + id)
+            elif method == "update":
+                args = line[line.find('(')+1:line.find(')')]
+
+                args = args.replace(",", "")
+                args = args.replace('"', "")
+
+                return self.do_update(f"{class_name} {args}")
+
         print("*** Unknown syntax:", line)
 
     def do_help(self, arg):
