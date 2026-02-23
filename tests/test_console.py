@@ -256,3 +256,38 @@ class TestConsole(unittest.TestCase):
             _, id = self._helper(f"create {cls}")
             key = f"{cls}.{id.strip()}"
             self.assertIn(key, storage.all())
+
+    def test_default_all(self):
+        """Test Class.all() calls do_all"""
+        with patch.object(HBNBCommand, 'do_all') as mock_do_all:
+            HBNBCommand().onecmd("User.all()")
+            mock_do_all.assert_called_once_with("User")
+
+    def test_default_count(self):
+        """Test Class.count() calls do_count"""
+        with patch.object(HBNBCommand, 'do_count') as mock_do_count:
+            HBNBCommand().onecmd("User.count()")
+            mock_do_count.assert_called_once_with("User")
+
+    def test_default_show(self):
+        """Test Class.show(id) calls do_show"""
+        with patch.object(HBNBCommand, 'do_show') as mock_do_show:
+            HBNBCommand().onecmd('User.show("1234")')
+            mock_do_show.assert_called_once_with("User 1234")
+
+    def test_default_destroy(self):
+        """Test Class.destroy(id) calls do_destroy"""
+        with patch.object(HBNBCommand, 'do_destroy') as mock_do_destroy:
+            HBNBCommand().onecmd('User.destroy("1234")')
+            mock_do_destroy.assert_called_once_with("User 1234")
+
+    def test_default_update(self):
+        """Test Class.update(id, attr, value) calls do_update"""
+        with patch.object(HBNBCommand, 'do_update') as mock_do_update:
+            HBNBCommand().onecmd('User.update("1234", "first_name", "John")')
+            mock_do_update.assert_called_once_with("User 1234 first_name John")
+
+    def test_default_unknown(self):
+        """Test unknown command prints error"""
+        _, output = self._helper("NotACommand")
+        self.assertIn("*** Unknown syntax:", output)    
