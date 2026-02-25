@@ -35,47 +35,12 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return
-
-        args = shlex.split(arg)
-        class_name = args[0]
-
-        if class_name not in self.classes:
+        elif arg not in self.classes:
             print("** class doesn't exist **")
-            return
-
-        # Create instance
-        obj = self.classes[class_name]()
-
-        # Parse parameters
-        for param in args[1:]:
-            if "=" not in param:
-                continue  # skip invalid format
-
-            key, value = param.split("=", 1)
-
-            # STRING
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]                 # remove quotes
-                value = value.replace('\\"', '"')   # unescape quotes
-                value = value.replace('_', ' ')     # underscore -> space
-                setattr(obj, key, value)
-
-            # FLOAT
-            elif "." in value:
-                try:
-                    setattr(obj, key, float(value))
-                except ValueError:
-                    continue
-
-            # INTEGER
-            else:
-                try:
-                    setattr(obj, key, int(value))
-                except ValueError:
-                    continue
-
-        obj.save()
-        print(obj.id)
+        else:
+            obj = self.classes[arg]()
+            print(obj.id)
+            obj.save()
 
     def do_show(self, arg):
         """Prints the string representation of an instance"""
