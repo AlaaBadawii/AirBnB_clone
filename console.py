@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 """Defines the HBNBCommand class for the command interpreter."""
 import cmd
+
+from sympy import arg
 from models.base_model import BaseModel
 from models import storage
 from models.amenity import Amenity
@@ -9,6 +11,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 from models.place import Place
+import shlex
 
 
 class HBNBCommand(cmd.Cmd):
@@ -27,15 +30,52 @@ class HBNBCommand(cmd.Cmd):
         }
 
     def do_create(self, arg):
-        """Creates a new instance"""
+        """Creates a new instance with optional parameters"""
+
         if not arg:
             print("** class name missing **")
-        elif arg not in self.classes:
+            return
+
+        args = shlex.split(arg)
+        class_name = args[0]
+
+        if class_name not in self.classes:
             print("** class doesn't exist **")
-        else:
-            obj = self.classes[arg]()
-            print(obj.id)
-            obj.save()
+            return
+
+        # Create instance
+        obj = self.classes[class_name]()
+
+        # Parse parameters
+        for param in args[1:]:
+            if "=" not in param:
+                continue  # skip invalid format
+
+            key, value = param.split("=", 1)
+
+            # STRING
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]                 # remove quotes
+                value = value.replace('\\"', '"')   # unescape quotes
+                value = value.replace('_', ' ')     # underscore -> space
+                setattr(obj, key, value)
+
+            # FLOAT
+            elif "." in value:
+                try:
+                    setattr(obj, key, float(value))
+                except ValueError:
+                    continue
+
+            # INTEGER
+            else:
+                try:
+                    setattr(obj, key, int(value))
+                except ValueError:
+                    continue
+
+        obj.save()
+        print(obj.id)
 
     def do_show(self, arg):
         """Prints the string representation of an instance"""
